@@ -1,28 +1,88 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Fil d'actualités</title>
-</head>
+{% extends 'base.html.twig' %}
+
+{% block menu_actu %} active {% endblock %}
+{% block body %}
+<style>
+/*.avatar {
+	display: inline;
+	float: left;
+	margin: 10px 15px;
+}
+h1{
+	margin: 0;
+}
+.intro{
+	display: inline;
+	float: right;
+	width: calc(100% - 100px);
+	background: red;
+	padding-bottom: 20px
+}
+.avatar img{
+	width: 70px;
+	border-radius: 50%;
+}
+.listeArticle{
+	background: #CCC;
+	text-align: center;
+	margin: 0 25% ;
+}
+
+.article{
+	background: white;
+	border: solid 1px #ccc;
+	margin-bottom: 20px;
+}
+:not(.avatar) > img {
+	width: calc(100% - 200px);
+	}*/
+	body{
+		background: #f2f2f2;
+	}
+	.listeArticle{
+		width: 70%;
+		margin: auto;
+		max-width: 700px;
+	}
+	.article{
+		background: white;
+		border:1px solid gray;
+	}
+	.avatar{
+		float: left;
+	}
+	.avatar img{
+		width: 100%;
+		max-width: 50px;
+		border-radius: 50%;
+		margin: 15px;
+	}
+	.info-article{
+		float: right;
+		width: calc(100% - 110px);
+		margin: 15px;
+	}
+	.titre{
+		clear: both;
+	}
+</style>
 <body>
-<h1>Fil d'actualités</h1>
-<div class="listeArticle">
-	<div class="article">
-		<div class="avatar"><img src="image/default.jpg"></div>
-		<div class="intro">
-			<h1>Mon Article Perso</h1>
-			<div class="dateArticle">01-01-2018 21:53:00</div>
+	<h1>Fil d'actualités</h1>
+	<div class="listeArticle">
+		{% for article in articles %}
+		<div class="article">
+			<div class="avatar"><img src="{{asset('upload/images/default.jpg')}}"></div>
+			<div class="info-article">
+				<div class="auteur">{{article.author.username}}</div>
+				<div class="dateArticle">01-01-2018 21:53:00</div>
+			</div>
+			<div class="titre">
+				<h1>{{article.titre}}</h1>
+
+			</div>
+			<div class="post">{{article.content}}</div>
+			<div class="link"><a href="{{ path('new.view', { 'id' : article.id})}}">En savoir plus</a></div>
 		</div>
-		<img src="image/article.jpg">
-		<div class="post">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi odit quo doloremque, nisi ipsa accusantium dolorem provident nostrum, neque voluptate inventore consequatur, possimus velit? Quae alias tenetur, ipsam rem voluptates?</div>
+		{% endfor %}
 	</div>
-	
-	<div class="article">
-		<h1>Mon titre Partagé</h1>
-		<div class="dateArticle">01-01-2018 21:53:00</div>
-		<img src="image/article.jpg">
-		<div class="extract">Lorem ipsum dolor sit amet..</div>
-		<div class="link"><a href="#">En savoir plus</a></div>
-	</div>
-</div>
-</body>
-</html>
+	{% endblock %}

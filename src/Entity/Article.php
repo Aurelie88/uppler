@@ -24,7 +24,7 @@ class Article
     private $content;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\user", inversedBy="articles")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="articles")
      * @ORM\JoinColumn(nullable=false)
      */
     private $author;
@@ -33,6 +33,11 @@ class Article
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="article")
      */
     private $comments;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $titre;
 
     public function __construct()
     {
@@ -97,5 +102,20 @@ class Article
         }
 
         return $this;
+    }
+
+    public function getTitre(): ?string
+    {
+        return $this->titre;
+    }
+
+    public function setTitre(string $titre): self
+    {
+        $this->titre = $titre;
+
+        return $this;
+    }
+    public function __toString() {
+        return $this->titre;
     }
 }

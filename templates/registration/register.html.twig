@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+<style type="text/css">
+    body{
+    background: #f2f2f2;
+}
+form#register{
+    width: 50%;
+    margin: auto;
+    max-width: 500px;
+    text-align: center;
+    border: 1px solid gray;
+    padding: 20px 30px 40px 30px;
+    background: white;
+    margin-top: 25px;
+}
+</style>
+<form id="register" action="" class="form-horizontal style-form" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+        <label class="control-label col-sm-12">Username :</label>
+        <div class="col-sm-12">
+            {{ form_errors(registrationForm.username) }}
+            {{ form_widget(registrationForm.username, {'attr' : {'class' : 'form-control'}}) }}
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-12">Password : </label>
+        <div class="col-sm-12">
+            {{ form_errors(registrationForm.plainPassword) }}
+            {{ form_widget(registrationForm.plainPassword, {'attr' : {'class' : 'form-control'}}) }}
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-12">Prénom : </label>
+        <div class="col-sm-12">
+            {{ form_errors(registrationForm.prenom) }}
+            {{ form_widget(registrationForm.prenom, {'attr' : {'class' : 'form-control'}}) }}
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-12">Nom : </label>
+        <div class="col-sm-12">
+            {{ form_errors(registrationForm.nom) }}
+            {{ form_widget(registrationForm.nom, {'attr' : {'class' : 'form-control'}}) }}
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-12">Avatar : </label>
+        <div class="col-sm-12">
+            {{ form_row(registrationForm.picture) }}
+        </div>
+    </div>
+    {{form_rest(registrationForm)}}
+    <input type="submit" name="submit" value="Enregistrer" class="btn btn-sm btn-success"/> 
+</form>
+{% endblock %}
