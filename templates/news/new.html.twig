@@ -1,26 +1,50 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>{{article.titre}}</title>
-</head>
-<body>
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<style type="text/css">
+    body{
+    	background: #f2f2f2;
+	}
+	.listeCommentaires{
+		width: 50%;
+    margin: auto;
+    max-width: 500px;
+    border: 1px solid gray;
+    padding: 20px 30px 40px 30px;
+    background: white;
+    margin-top: 25px; 
+	}
+	.comment img{
+		width: 10%;
+		max-width: 50px;
+		border-radius: 50px; 
+		margin: 15px;
+	}
+	.comment span:first-child{
+		font-weight: 500;
+		color: #1254ee;
+		padding-right: 10px;
+	}
+</style>
 	<h1>{{article.titre}}</h1>
 	<p>{{article.content}}</p>
 	écrit par {{article.author.username}}
 
 	<a href="{{path('actus')}}"> Retour sur le fil d'actualités</a>
 	<h2>Réactions </h2>
-	{{dump(nbComment)}}
+	<div class="listeCommentaires">
 	{% for commentaire in commentaires %}
-
-	{{commentaire.author.username}} à écrit le commmentaire suivant : 
-	<br>
-	{{commentaire.content}}
-	<br>
-	{{dump(commentaire.author.roles)}}
-	<br>
+	<div class="comment">
+		<div class="image">
+			<img src="{{asset('/upload/images/' ~ commentaire.author.picture) }}">
+		</div>
+		<div class="text">
+			<span>{{commentaire.author.username}}</span>
+			<span>{{commentaire.content}}</span>
+		</div>
+	</div>
 	{% endfor %}
-
+	</div>
 	<h2>Ajouter votre commentaire</h2>
 	<div class="form-panel">
 		<form action="" class="form-horizontal style-form" method="POST">
@@ -35,5 +59,4 @@
 			<input type="submit" name="submit" value="Enregistrer" class="btn btn-sm btn-success"/>
 		</form>
 	</div>
-</body>
-</html>
+{% endblock %}

@@ -2,14 +2,20 @@
 
 namespace App\Entity;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+
+use App\ManagerInterface;
+use App\Form\ArticleType;
+use App\Repository\ArticleRepository;
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ArticleRepository")
  */
-class Article
+class Article extends AbstractController implements ManagerInterface
 {
     /**
      * @ORM\Id()
@@ -115,7 +121,20 @@ class Article
 
         return $this;
     }
+
     public function __toString() {
         return $this->titre;
+    }
+
+    public function ajouter() {
+        
+    }
+
+    public function supprimer(){
+
+    }
+
+    public function modifier(){
+
     }
 }

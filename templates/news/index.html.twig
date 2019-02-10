@@ -81,7 +81,11 @@ h1{
 
 			</div>
 			<div class="post">{{article.content}}</div>
+			{% if app.user == article.author %}
 			<div class="link"><a href="{{ path('new.view', { 'id' : article.id})}}">En savoir plus</a></div>
+			<div class="link"><a href="{{ path('new.delete', { 'id' : article.id})}}">supprimer</a></div>
+			<div class="link"><a href="{{ path('new.edit', { 'id' : article.id})}}">modifier</a></div>
+			{% endif %}
 		</div>
 		{% endfor %}
 	</div>

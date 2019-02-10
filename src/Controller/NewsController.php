@@ -32,27 +32,6 @@ class NewsController extends AbstractController
      */
     public function news(ArticleRepository $articleReposiory): Response
     {
-        /*$user = $this->getUser();
-        
-
-        $newComment = new Comment();
-        $formComment= $this->createForm(CommentType::class, $newComment);
-
-         $formComment->handleRequest($request);
-
-        //si envoie du formulaire et qu'il est valide
-        if($formComment->isSubmitted() && $formComment->isValid() ){
-            $article = $articleRepository->find($id);
-            $em= $this->getDoctrine()->getManager();
-            $newComment->setAuthor($user);
-            $newComment->setArticle($article);
-            //ajout de le commentaire en bdd
-            $em->persist($newComment);
-            $em->flush();
-            //redirection vers le fil d'actualité
-            return $this->redirect($this->generateUrl('actus'));
-        }*/
-
         return $this->render('news/index.html.twig', 
         array("articles" => $articleReposiory->findAll()));
     }
@@ -70,7 +49,7 @@ class NewsController extends AbstractController
         $newComment = new Comment();
         $formComment= $this->createForm(CommentType::class, $newComment);
 
-         $formComment->handleRequest($request);
+        $formComment->handleRequest($request);
 
         //si envoie du formulaire et qu'il est valide
         if($formComment->isSubmitted() && $formComment->isValid() ){
@@ -94,6 +73,76 @@ class NewsController extends AbstractController
             "ajoutComment" => $formComment->createView()));
     }
 
+    /**
+     * @Route("delete/new/{id}", name="new.delete")
+     */
+    public function newDelete(ArticleRepository $articleRepository, CommentRepository $commentRepository, $id, Request $request) : Response
+    {
+        //on recupere le metier que l'on souhaite supprimé
+        $em= $this->getDoctrine()->getManager()->getRepository('App:Article');
+        $article=$em->find($id);
+
+        //si on nentrouve pas métier, on lance une exception
+        if ($article==null){
+            throw new \Exception("Impossible de trouver l'article n'existe pas");
+        }
+
+        //si on repond a la confirmation
+        if(isset($_POST['del'])){
+            if($_POST['del']=='Oui'){//par oui
+                try{// on commence par supprimer les commentaire lié a l'article
+                    $em= $this->getDoctrine()->getManager();
+                    $comments=$em->getRepository('App:Comment')->findBy(["article" => $id]);
+                    //supprime un commentaire à la  fois
+                    foreach ($comments as $comment) {
+                        $em->remove($comment);
+                    }
+                    $em->remove($article);
+                    $em->flush();
+                } catch (\Doctrine\DBAL\DBALException $e){
+                }
+                //retour au fil d'actualité
+                return $this->redirect($this->generateUrl('actus'));
+            }
+            else{// si on ne souhaite pas supprimer on retourne directement au fil d'actualité
+                return $this->redirect($this->generateUrl('actus'));
+            }
+        }
+        //on retourne la vue avec les données du métier
+        return $this->render('news/delete.html.twig', array('article' => $article));
+    }
+
+    /**
+     * @Route("edit/new/{id}", name="new.edit")
+     */
+    public function newEdit(ArticleRepository $articleRepository, CommentRepository $commentRepository, $id, Request $request) : Response
+    {
+      $user = $this->getUser();
+        //var_dump($user);
+        if($user===NULL){
+            //lancer une exception comme quoi l'utilisateur doit etre co 
+        }
+        $new = $articleRepository->find($id);
+        if($user!=$new->getAuthor()){
+            //lancer une exception sur l'autorisation 
+        }
+        $form = $this->createForm(ArticleType::class, $new);
+
+        $form->handleRequest($request);
+
+        //si envoie du formulaire et qu'il est valide
+        if($form->isSubmitted() && $form->isValid() ){
+            $em= $this->getDoctrine()->getManager();
+            $new->setAuthor($user);
+            //ajout de l'article en bdd
+            $em->persist($new);
+            $em->flush();
+            //redirection vers le fil d'actualité
+            return $this->redirect($this->generateUrl('actus'));
+        }
+
+        return $this->render('news/add.html.twig', array('form' => $form->createView()));
+    }
     /**
      * @Route("/add/new", name="new.add")
      */
