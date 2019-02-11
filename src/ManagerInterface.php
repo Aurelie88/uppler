@@ -4,9 +4,9 @@ namespace App;
 
 interface ManagerInterface
 {
-	public function ajouter();
+	public function ajouter($data);
 
-	public function supprimer();
+	public function supprimer($data);
 
 	public function modifier();
 }

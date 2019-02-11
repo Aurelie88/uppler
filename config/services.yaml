@@ -5,7 +5,8 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'en'
-    images_directory: '%kernel.project_dir%/public/uploads/images'
+    images_directory : '%kernel.root_dir%/../public/uploads/images'
+
 
 services:
     # default configuration for services in *this* file
@@ -27,3 +28,17 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    article:
+        class: App\Entity\Article
+        arguments: ['@doctrine.orm.entity_manager']
+
+    image_uploader:
+        class: App\ImageUpload
+        arguments: ['%images_directory%']
+
+    image_listener:
+        class: App\EventListener\ImageUploadListener
+        arguments: ['@image_uploader']
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }

@@ -56,6 +56,7 @@ h1{
 		max-width: 50px;
 		border-radius: 50%;
 		margin: 15px;
+		max-height: 50px;
 	}
 	.info-article{
 		float: right;
@@ -71,7 +72,7 @@ h1{
 	<div class="listeArticle">
 		{% for article in articles %}
 		<div class="article">
-			<div class="avatar"><img src="{{asset('upload/images/default.jpg')}}"></div>
+			<div class="avatar"><img src="{{asset('uploads/images/' ~ article.author.picture)}}"></div>
 			<div class="info-article">
 				<div class="auteur">{{article.author.username}}</div>
 				<div class="dateArticle">01-01-2018 21:53:00</div>
@@ -81,8 +82,8 @@ h1{
 
 			</div>
 			<div class="post">{{article.content}}</div>
-			{% if app.user == article.author %}
 			<div class="link"><a href="{{ path('new.view', { 'id' : article.id})}}">En savoir plus</a></div>
+			{% if app.user == article.author %}
 			<div class="link"><a href="{{ path('new.delete', { 'id' : article.id})}}">supprimer</a></div>
 			<div class="link"><a href="{{ path('new.edit', { 'id' : article.id})}}">modifier</a></div>
 			{% endif %}

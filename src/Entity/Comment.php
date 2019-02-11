@@ -3,12 +3,21 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\EntityManager;
+use App\Entity\Article;
+use App\ManagerInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
  */
-class Comment
+class Comment implements ManagerInterface
 {
+    private $em;
+    public function __construct(EntityManager $em)
+    {
+        $this->em=$em;
+    }
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -72,5 +81,26 @@ class Comment
         $this->article = $article;
 
         return $this;
+    }
+
+    public function ajouter($data){
+        if($data['user']===NULL){             
+            throw new Exception("Veuillez vous connecter", 1);            
+        }
+        $this->setAuthor($data['user']);
+        $this->setArticle($this->em->getRepository('App:Article')->find($data['idArticle']));
+        //ajout de le commentaire en bdd
+        $this->em->persist($this);
+        $this->em->flush();
+    }
+
+    public function supprimer($data){
+        $comment= $this->em->getRepository('App:Comment')->find($data['id']);
+        $this->em->remove($comment);
+        $this->em->flush();
+    }
+
+    public function modifier(){
+
     }
 }

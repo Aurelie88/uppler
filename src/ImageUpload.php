@@ -15,9 +15,8 @@ class ImageUpload
     public function upload(UploadedFile $file)
     {
         $fileName= md5(uniqid()).".".$file->guessExtension();
-
+        //die($this->getTargetDir());
         $file->move($this->getTargetDir(), $fileName);
-        die('passe ici');
         return $fileName;
     }
 
