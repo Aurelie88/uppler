@@ -27,11 +27,7 @@ services:
         tags: ['controller.service_arguments']
 
     # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
-    article:
-        class: App\Entity\Article
-        arguments: ['@doctrine.orm.entity_manager']
-
+    # please note that last definitions always *replace* previous ones    
     image_uploader:
         class: App\ImageUpload
         arguments: ['%images_directory%']
@@ -42,3 +38,13 @@ services:
         tags:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }
+    
+    comment_manager:
+        class : App\Service\CommentManager
+        arguments: ['Doctrine\Common\Persistence\ObjectManager']
+
+    article_manager:
+        class : App\Service\ArticleManager
+        arguments: ['@doctrine.orm.entity_manager']
+
+
