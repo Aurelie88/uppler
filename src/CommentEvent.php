@@ -9,6 +9,7 @@ use App\Entity\Comment;
 class CommentEvent extends Event
 {
 	
+	const NAME ="comment.add";
 	private $comment;
 
 	public function __construct(Comment $comment)

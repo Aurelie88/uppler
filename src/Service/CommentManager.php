@@ -15,6 +15,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\BlogInterface;
 use App\Form\ArticleType;
 use App\Entity\Comment;
+use App\CommentEvent;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -22,14 +23,14 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 class CommentManager implements BlogInterface
 {
 
-    protected $em;
+    private $em;
+    private $eventDispatcher;
 
-    public function __construct(ObjectManager $em)
+    public function __construct(ObjectManager $em, EventDispatcherInterface $eventDispatcher)
     {
 
         $this->em= $em;
-
-        //$this->dispatcher = new EventDispatcher();
+        $this->dispatcher = $eventDispatcher;
     }
 
     public function add($data){
@@ -42,6 +43,8 @@ class CommentManager implements BlogInterface
         //ajout de le commentaire en bdd
         $this->em->persist($comment);
         $this->em->flush();
+
+        $this->dispatcher->dispatch(CommentEvent::NAME, new CommentEvent($comment));
 
     }
 
