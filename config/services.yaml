@@ -53,13 +53,5 @@ services:
         tags:
             - { name : kernel.view}
 
-    comment.count: 
-        class: App\CommentCount
-        arguments: ['@doctrine.orm.entity_manager']
-
-    comment.count.listener:
-        class: App\EventListener\CommentNumberListener
-        arguments : ['comment.count', '@templating']
-
 
 

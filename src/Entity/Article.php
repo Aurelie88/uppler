@@ -65,6 +65,13 @@ class Article
         return $this->content;
     }
 
+    public function setId(?int $id): self
+    {
+        $this->id=$id;
+
+        return $this;
+    }
+
     public function setContent(string $content): self
     {
         $this->content = $content;

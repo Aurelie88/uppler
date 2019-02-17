@@ -161,7 +161,7 @@ class NewsController extends AbstractController
         //verifie si l'article existe
         $article = $this->recupererArticle($id);
         //lance une erreur si on est pas propriétaire de l'article
-        $this->isAuthor();
+        $this->isAuthor($user,$article);
         //on creer le form rempli avec les valeur de l'article selectionné
         $form = $this->createForm(ArticleType::class, $article);
 
@@ -178,18 +178,18 @@ class NewsController extends AbstractController
             return $this->redirect($this->generateUrl('actus'));
         }
 
-        return $this->render('news/add.html.twig', array('form' => $form->createView()));
+        return $this->render('news/add.html.twig', array('form' => $form->createView(), 'id' => $id));
     }
     /**
      * @Route("/add/new", name="new.add")
      */
     public function newAdd(ArticleManager $articleManager, Request $request)
     {
-        try{
+        /*try{*/
             $user = $this->verificationAuthentification();
-        } catch(HttpException $e){
+        /*} catch(HttpException $e){
             return $this->redirect($this->generateUrl('app_login'))->send(); 
-        }
+        }*/
         //création du formulaire d'ajout d'article
         $article = new Article();
         $form = $this->createForm(ArticleType::class, $article);
@@ -209,8 +209,7 @@ class NewsController extends AbstractController
 
     public function verificationAuthentification(){
         $user = $this->getUser();
-        if($user===NULL){
-            //return $this->redirect($this->generateUrl('app_login'))->send(); 
+        if($user===NULL){ 
             //lancer une exception comme quoi l'utilisateur doit etre co           
             throw new HttpException(403, "Vous devez vous connecter afin de pouvoir accèder au contenu");
         }        
@@ -242,8 +241,10 @@ class NewsController extends AbstractController
     }
 
     public function isAuthor($user, $Entity){
-        if($user!==$Entity->getAuthor()){
-            throw new HttpException(403, "Vous n'est pas autorisé a apporter des modification");
+        if(!in_array("ROLE_ADMIN", $user->getRoles())){
+            if($user!==$Entity->getAuthor()){
+                throw new HttpException(403, "Vous n'est pas autorisé a apporter des modification");
+            }
         }
     }
 }

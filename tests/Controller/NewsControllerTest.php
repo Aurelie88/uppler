@@ -3,6 +3,7 @@
 namespace App\Test\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Controller\NewsController;
 
 
 class NewsControllerTest extends WebTestCase
@@ -41,7 +42,7 @@ class NewsControllerTest extends WebTestCase
 		//Si le client n'est pas connecter on lance une error 403
 		$client = static::createClient();
 
-		$client->request('GET', '/add/news');
+		$client->request('GET', '/add/new');
 
 		$this->assertEquals(403, $client->getResponse()->getStatusCode());
 
@@ -51,9 +52,19 @@ class NewsControllerTest extends WebTestCase
     	'PHP_AUTH_PW'   => 'admin123456',
 		]);
 
-		$clientSignIn->request('GET', '/add/news');
+		$clientSignIn->request('GET', '/add/new');
 
 		$this->assertEquals(200, $clientSignIn->getResponse()->getStatusCode());
+	}
+
+	public function testVerificationAuthentification(){
+		$controller = new NewsController();
+
+		$client = static::createClient();
+
+		$controller->verificationAuthentification();
+
+		$this->assertEquals(403, $client->getResponse()->getStatusCode());
 	}
 
 }

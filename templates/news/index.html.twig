@@ -1,7 +1,6 @@
 {% extends 'parent.html.twig' %}
 {% block body %}
 
-{{dump(articles)}}
 {% set i=0 %}
 {% for article in articles %}
 
@@ -25,8 +24,20 @@
 				<div class="single-blog-content">
 					<div class="line"></div>
 					<a href="#" class="post-tag">Lifestyle</a>
-					<h4><a href="{{ path('new.view', { 'id' : article.article.id})}}" class="post-headline">{{article.article.titre}}</a></h4>
-					<p>{{article.article.content | slice(3,178)}}...</p>
+					<h4 style="display: inline-block;"><a href="{{ path('new.view', { 'id' : article.article.id})}}" class="post-headline">{{article.article.titre}}</a></h4>
+					{% if app.user == article.article.author or is_granted('ROLE_ADMIN') %}
+                                        <div class="dropdown" style=" display: inline-block;">
+  <button class="btn btn-primary-outline" style="background:none;"type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+</button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <a class="dropdown-item" href="{{ path('new.delete', { 'id' : article.article.id})}}">Supprimer</a>
+    <a class="dropdown-item" href="{{ path('new.edit', { 'id' : article.article.id})}}">Modifier</a>
+  </div>
+</div>
+{% endif %}
+					{{ ("<div style='max-height:140px; overflow: hidden;margin-bottom: 30px;color: #878787;font-size: 14px;line-height: 2;
+    font-family: \"helveticaneuemedium\";'>" ~ article.article.content ~ "</div>") | raw}}
 					<div class="post-meta">
 						<p>By <a href="#">{{article.article.author.username}}</a></p>
 						<p>{{article.nbComment}} comments</p>
@@ -36,9 +47,5 @@
 		</a>
 	</div>
 </div>
-{% if app.user == article.article.author %}
-<div class="link"><a href="{{ path('new.delete', { 'id' : article.article.id})}}">supprimer</a></div>
-<div class="link"><a href="{{ path('new.edit', { 'id' : article.article.id})}}">modifier</a></div>
-{% endif %}
 {% endfor %}
 {% endblock %}

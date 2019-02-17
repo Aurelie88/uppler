@@ -1,0 +1,10 @@
+{%  extends "parent.html.twig" %}
+
+{% block body_content %}
+<section id="main-content">
+    <section class="wrapper">
+        <h3> {{ exception.message }} </h3>
+        <a href="{{  path('home') }}">Retour à la page d'acceuil</a>
+    </section>
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+<div class="post-a-comment-area mt-70">
+    <h5>Leave a reply</h5>
+    <!-- Reply Form -->
+    <form action="" method="POST">
+        <div class="row">
+            <div class="col-12">
+                <div class="group">
+                    {{ form_errors(ajoutComment.content) }}
+                    {{ form_widget(ajoutComment.content, {'attr' : {'class' : 'form-control' }}) }}
+                    <span class="highlight"></span>
+                    <span class="bar"></span>
+                    <label>Comment</label>
+                </div>
+            </div>
+            <div class="col-12">
+                {{form_rest(ajoutComment)}}
+                <button type="submit" class="btn original-btn">Reply</button>
+            </div>
+        </div>
+    </form>
+</div>

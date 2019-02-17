@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Entity\User;
 use App\Entity\Article;
+use App\Entity\Comment;
 
 class AppFixtures extends Fixture
 {
@@ -37,6 +38,15 @@ class AppFixtures extends Fixture
         $paragraphe[]=array("content"=>"<p>Purus, in molestie tortor nibh sit amet orci. Ut sagittis lobortis mauris. Suspendisse aliquet molestie tellus. Aenean egestas hendrerit neque. In ornare sagittis felis. Donec tempor, est ac mattis semper, dui lectus rutrum urna, nec luctus felis purus ac tellus. Suspendisse sed dolor. Fusce mi lorem, vehicula et, rutrum eu, ultrices sit amet, risus. Donec nibh enim, gravida sit amet, dapibus id, blandit at, nisi. Cum</p>");
         $paragraphe[]=array("content"=>"<p>Suspendisse aliquet, sem ut cursus luctus, ipsum leo elementum sem, vitae aliquam eros turpis non enim. Mauris quis turpis vitae purus gravida sagittis. Duis gravida. Praesent eu nulla at sem molestie sodales. Mauris blandit enim consequat purus. Maecenas libero est, congue a, aliquet vel, vulputate eu, odio. Phasellus at augue id ante dictum cursus. Nunc mauris elit, dictum eu, eleifend nec, malesuada ut, sem. Nulla interdum. Curabitur dictum. Phasellus in felis. Nulla tempor augue ac ipsum. Phasellus vitae mauris sit amet lorem semper auctor. Mauris vel turpis. Aliquam adipiscing lobortis risus. In mi pede, nonummy ut, molestie in, tempus eu, ligula. Aenean euismod mauris eu elit. Nulla facilisi. Sed neque. Sed eget lacus. Mauris non dui nec urna suscipit nonummy. Fusce fermentum fermentum arcu. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Phasellus ornare. Fusce mollis. Duis sit amet diam eu dolor egestas rhoncus. Proin nisl sem, consequat nec, mollis</p>");
         $paragraphe[]=array("content"=>"<p>Ac libero nec ligula consectetuer rhoncus. Nullam velit dui, semper et, lacinia vitae, sodales at, velit. Pellentesque ultricies dignissim lacus. Aliquam rutrum lorem ac risus. Morbi metus. Vivamus euismod urna. Nullam lobortis quam a felis ullamcorper viverra. Maecenas iaculis aliquet diam. Sed diam lorem, auctor quis, tristique ac, eleifend vitae, erat. Vivamus nisi. Mauris nulla. Integer urna. Vivamus molestie dapibus ligula. Aliquam erat volutpat. Nulla dignissim. Maecenas</p>");
+        $idArticle=0;
+        $user= new User();
+            $user->setNom('CUNY');
+            $user->setPrenom('Aurélie');
+            $user->setPassword($this->passwordEncoder->encodePassword($user, "admin"));
+            $user->setUsername('admin');
+            $user->setRoles(['ROLE_ADMIN']);
+            $user->setPicture('default.jpg');
+            $manager->persist($user);
 
         for ($i=0 ; $i<count($personne); $i++){
             $user= new User();
@@ -44,11 +54,12 @@ class AppFixtures extends Fixture
             $user->setPrenom($personne[$i]['prenom']);
             $user->setPassword($this->passwordEncoder->encodePassword($user, "123456"));
             $user->setUsername($personne[$i]['prenom']);
-            $user->setPicture('default.jpg');
+            $user->setPicture(($i+1).'.jpg');
             $manager->persist($user);
             //création de 0 à 3 articles par utilisateur
             $nbArticleUser=rand(0,3);
             for ($idx=0; $idx<$nbArticleUser; $idx++){
+                $idArticle++;
                 $article = new Article();
                 $articleContent="";
                 $nbParagrapheArticle = rand(2,10);
@@ -57,10 +68,22 @@ class AppFixtures extends Fixture
                 }
                 $article->setContent($articleContent);
                 $article->setAuthor($user);
-                $article->setTitre("Mon Article".$idx);
+                $article->setTitre("Mon super titre".$idArticle);
                 $manager->persist($article);
             }
         }
+        $manager->flush();
+
+        for ($k=0; $k < 50; $k++) { 
+            $articleComment=rand(1,$idArticle);
+            $comment= new Comment();
+            $article=$manager->getRepository('App:Article')->findBy(['titre' => "Mon super titre".$articleComment]);
+            $comment->setArticle($article[0]);
+            $comment->setAuthor($manager->getRepository('App:User')->findBy(['username' => $personne[rand(0,5)]['prenom']])[0]);
+            $comment->setContent("gllriksdj rudfhnc udj hgv dfjch vn dfjc fhvn rdijkcfhvn rodkfujv sdfj esdf jv rd fnv rdjjfv rd");
+            $manager->persist($comment);
+        }
+
         $manager->flush();
     }
 }

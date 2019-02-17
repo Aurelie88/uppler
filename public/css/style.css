@@ -591,11 +591,11 @@ img {
     @media only screen and (min-width: 992px) and (max-width: 1199px) {
       .single-blog-area .single-blog-content h4 a {
         margin-bottom: 20px; } }
-  .single-blog-area .single-blog-content > p {
+  .single-blog-area .single-blog-content > p, .single-blog-area .single-blog-content p {
     line-height: 2;
     margin-bottom: 70px; }
     @media only screen and (min-width: 992px) and (max-width: 1199px) {
-      .single-blog-area .single-blog-content > p {
+      .single-blog-area .single-blog-content > p, .single-blog-area .single-blog-content p {
         margin-bottom: 30px; } }
   .single-blog-area .single-blog-content .post-meta p {
     font-size: 9px;
