@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
@@ -45,15 +46,14 @@ class NewsController extends AbstractController
     public function news(ArticleRepository $articleReposiory): Response
     {
         $user = $this->verificationAuthentification();
-        
         return $this->render('news/index.html.twig', 
-        array("articles" => $articleReposiory->findAll()));
+        array("articles" => $articleReposiory->getAllArticleWithNbcomment()));
     }
 
     /**
      * @Route("/new/{id}", name="new.view")
      */
-    public function newView($id, Request $request, CommentManager $commentManager, CommentRepository $commentRepository) : Response
+    public function newView($id, Request $request, CommentManager $commentManager, CommentRepository $commentRepository)
     {   
         //acces par mot de passe     
         $user = $this->verificationAuthentification();
@@ -70,12 +70,22 @@ class NewsController extends AbstractController
         $formComment= $this->createForm(CommentType::class, $newComment);
 
         $formComment->handleRequest($request);
-
         //si un commentaire est ajouter
         if($formComment->isSubmitted() && $formComment->isValid() ){
             $commentManager->add(array("user" => $user, "idArticle" => $id, "comment" => $newComment));
+            
             //redirection vers la page de l'article article 
-            return $this->redirect($this->generateUrl('new.view', ['id' => $id]));
+            //return $this->redirect($this->generateUrl('new.view', ['id' => $id]));
+            //appel l'event kernel.view
+            return array(
+            'template' => 'news/new.html.twig',
+            'data' => array(
+                'article' => $article,
+                "commentaires" => $comments,
+                "nbComment" => $nbComment[0]["nb"],
+                "ajoutComment" => $formComment->createView()
+                )
+            );
         }
         
         return $this->render('news/new.html.twig', 
@@ -84,14 +94,16 @@ class NewsController extends AbstractController
                 "commentaires" => $comments,
                 "nbComment" => $nbComment[0]["nb"],
                 "ajoutComment" => $formComment->createView()));
+             
     }
 
     /**
      * @Route("delete/new/{id}", name="new.delete")
      */
-    public function newDelete($id, ArticleManager $articleManager, Request $request) : Response
+    public function newDelete($id, ArticleManager $articleManager,CommentManager $commentManager, Request $request) : Response
     {
         $user = $this->verificationAuthentification();
+
         //lance une exception si l'article à supprimer n'existe pas
         $article = $this->recupererArticle($id);
         //verifie qu'on a l'autorisation de le supprimer (uniquement si on est l'auteur)
@@ -118,15 +130,18 @@ class NewsController extends AbstractController
     public function commentDelete(CommentManager $commentManager, $id, Request $request) : Response
     {
         $user = $this->verificationAuthentification();
+        
+        
         //on verifie si le commentaire existe
-        $comment = $this->recupererComment($id);
+        $comment = $this->recupererComment($id, $user);
         //verifie qu'on a l'autorisation de le supprimer (uniquement si on est l'auteur)
         $this->isAuthor($user, $comment);
         //si on repond a la confirmation de suppresion
         if(isset($_POST['del'])){
             if($_POST['del']=='Oui'){//par oui
                 try{
-                    $commentManager->delete(array('id' => $id));
+                    //$commentManager->delete(array('id' => $id));
+                    $commentManager->delete(['comment' => $comment]);
                 } catch (\Doctrine\DBAL\DBALException $e){
                 }
             }
@@ -170,7 +185,11 @@ class NewsController extends AbstractController
      */
     public function newAdd(ArticleManager $articleManager, Request $request)
     {
-        $user = $this->verificationAuthentification();
+        try{
+            $user = $this->verificationAuthentification();
+        } catch(HttpException $e){
+            return $this->redirect($this->generateUrl('app_login'))->send(); 
+        }
         //création du formulaire d'ajout d'article
         $article = new Article();
         $form = $this->createForm(ArticleType::class, $article);
@@ -191,25 +210,31 @@ class NewsController extends AbstractController
     public function verificationAuthentification(){
         $user = $this->getUser();
         if($user===NULL){
-            return $this->redirect($this->generateUrl('app_login'))->send(); 
+            //return $this->redirect($this->generateUrl('app_login'))->send(); 
             //lancer une exception comme quoi l'utilisateur doit etre co           
-            //throw new HttpException(403, "veuillez vous connecter");
+            throw new HttpException(403, "Vous devez vous connecter afin de pouvoir accèder au contenu");
         }        
         return $user;
     } 
 
     public function recupererArticle($id){
         $article =$this->em->getRepository('App:Article')->find($id);
-        //si on nentrouve pas métier, on lance une exception
+        //si on ne trouve pas l'article, on lance une exception
         if ($article==null){
             throw new \Exception("Impossible de trouver l'article n'existe pas");
         }
         return $article;
     }
 
-    public function recupererComment($id){
-        $comment=$this->em->getRepository('App:Comment')->find($id);
-        //si on nentrouve pas métier, on lance une exception
+    public function recupererComment($id, $user){
+        if($id==0){
+            $comment=$this->em->getRepository('App:Comment')->findLastCommentUser($user)[0];
+            //die(var_dump($comment));
+        }
+        else{
+            $comment=$this->em->getRepository('App:Comment')->find($id);
+        }
+        //si on ne trouve pas le commentaire, on lance une exception
         if ($comment==null){
             throw new \Exception("Impossible de trouver le commentaire n'existe pas");
         }

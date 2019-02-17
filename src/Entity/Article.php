@@ -44,9 +44,15 @@ class Article
      */
     private $titre;
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createAt;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
+        $this->setCreateAt(new \DateTime());
     }
 
     public function getId(): ?int
@@ -123,6 +129,18 @@ class Article
 
     public function __toString() {
         return $this->titre;
+    }
+
+    public function getCreateAt(): ?\DateTimeInterface
+    {
+        return $this->createAt;
+    }
+
+    public function setCreateAt(\DateTimeInterface $createAt): self
+    {
+        $this->createAt = $createAt;
+
+        return $this;
     }
 
 

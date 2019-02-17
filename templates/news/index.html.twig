@@ -1,93 +1,44 @@
-{% extends 'base.html.twig' %}
-
-{% block menu_actu %} active {% endblock %}
+{% extends 'parent.html.twig' %}
 {% block body %}
-<style>
-/*.avatar {
-	display: inline;
-	float: left;
-	margin: 10px 15px;
-}
-h1{
-	margin: 0;
-}
-.intro{
-	display: inline;
-	float: right;
-	width: calc(100% - 100px);
-	background: red;
-	padding-bottom: 20px
-}
-.avatar img{
-	width: 70px;
-	border-radius: 50%;
-}
-.listeArticle{
-	background: #CCC;
-	text-align: center;
-	margin: 0 25% ;
-}
 
-.article{
-	background: white;
-	border: solid 1px #ccc;
-	margin-bottom: 20px;
-}
-:not(.avatar) > img {
-	width: calc(100% - 200px);
-	}*/
-	body{
-		background: #f2f2f2;
-	}
-	.listeArticle{
-		width: 70%;
-		margin: auto;
-		max-width: 700px;
-	}
-	.article{
-		background: white;
-		border:1px solid gray;
-	}
-	.avatar{
-		float: left;
-	}
-	.avatar img{
-		width: 100%;
-		max-width: 50px;
-		border-radius: 50%;
-		margin: 15px;
-		max-height: 50px;
-	}
-	.info-article{
-		float: right;
-		width: calc(100% - 110px);
-		margin: 15px;
-	}
-	.titre{
-		clear: both;
-	}
-</style>
-	{{dump(articles)}}
-	<h1>Fil d'actualités</h1>
-	<div class="listeArticle">
-		{% for article in articles %}
-		<div class="article">
-			<div class="avatar"><img src="{{asset('uploads/images/' ~ article.author.picture)}}"></div>
-			<div class="info-article">
-				<div class="auteur">{{article.author.username}}</div>
-				<div class="dateArticle">01-01-2018 21:53:00</div>
-			</div>
-			<div class="titre">
-				<h1>{{article.titre}}</h1>
+{{dump(articles)}}
+{% set i=0 %}
+{% for article in articles %}
 
+<div class="single-blog-area blog-style-2 mb-50 wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="1000ms">
+	<div class="row align-items-center">
+		<a href="#">
+			<div class="col-12 col-md-6">
+				<div class="single-blog-thumbnail">
+					{% set image = (i % 5)+1 %}
+					{% set i=i+1 %}
+					<img src="{{asset('img/blog-img/'~ image ~'.jpg')}}" alt="">
+					<div class="post-date">
+						<a href="#">{{ article.article.createAt |date("d") }}<span>{{ article.article.createAt |date("F") }}</span></a>
+					</div>
+				</div>
 			</div>
-			<div class="post">{{article.content}}</div>
-			<div class="link"><a href="{{ path('new.view', { 'id' : article.id})}}">En savoir plus</a></div>
-			{% if app.user == article.author %}
-			<div class="link"><a href="{{ path('new.delete', { 'id' : article.id})}}">supprimer</a></div>
-			<div class="link"><a href="{{ path('new.edit', { 'id' : article.id})}}">modifier</a></div>
-			{% endif %}
-		</div>
-		{% endfor %}
+		</a>
+		<a href="#">
+			<div class="col-12 col-md-6">
+				<!-- Blog Content -->
+				<div class="single-blog-content">
+					<div class="line"></div>
+					<a href="#" class="post-tag">Lifestyle</a>
+					<h4><a href="{{ path('new.view', { 'id' : article.article.id})}}" class="post-headline">{{article.article.titre}}</a></h4>
+					<p>{{article.article.content | slice(3,178)}}...</p>
+					<div class="post-meta">
+						<p>By <a href="#">{{article.article.author.username}}</a></p>
+						<p>{{article.nbComment}} comments</p>
+					</div>
+				</div>
+			</div>
+		</a>
 	</div>
-	{% endblock %}
+</div>
+{% if app.user == article.article.author %}
+<div class="link"><a href="{{ path('new.delete', { 'id' : article.article.id})}}">supprimer</a></div>
+<div class="link"><a href="{{ path('new.edit', { 'id' : article.article.id})}}">modifier</a></div>
+{% endif %}
+{% endfor %}
+{% endblock %}

@@ -18,7 +18,13 @@ use App\Entity\Comment;
 use App\CommentEvent;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use App\EventListener\CommentCountListener;
+use App\CommentCount;
 
+use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Templating\EngineInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 class CommentManager implements BlogInterface
 {
@@ -34,6 +40,7 @@ class CommentManager implements BlogInterface
     }
 
     public function add($data){
+
         if($data['user']===NULL){             
             throw new Exception("Veuillez vous connecter", 1);            
         }
@@ -44,13 +51,19 @@ class CommentManager implements BlogInterface
         $this->em->persist($comment);
         $this->em->flush();
 
-        $this->dispatcher->dispatch(CommentEvent::NAME, new CommentEvent($comment));
-
+        //$this->dispatcher->dispatch(CommentEvent::NAME, new CommentEvent($comment));
+        /*$CommentCount = new CommentCount($this->em);
+        $commentCountListener = new CommentCountListener($CommentCount);
+       
+    
+        //$this->dispatcher->dispatch(KernelEvents::VIEW, $event);
+        $this->dispatcher->addListener('kernel.response', array($commentCountListener, 'processComment'));
+        //$this->dispatcher->addListener('kernel.view', array($commentCountListener, 'onKernelView'));*/
     }
 
     public function delete($data){
-        $comment= $this->em->getRepository('App:Comment')->find($data['id']);
-        $this->em->remove($comment);
+        //$comment= $this->em->getRepository('App:Comment')->find($data['id']);
+        $this->em->remove($data['comment']);
         $this->em->flush();
     }
 

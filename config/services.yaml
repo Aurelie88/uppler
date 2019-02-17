@@ -41,10 +41,25 @@ services:
     
     comment_manager:
         class : App\Service\CommentManager
-        arguments: ['Doctrine\Common\Persistence\ObjectManager']
+        arguments: ['@doctrine.orm.entity_manager', '@event_dispatcher']
 
     article_manager:
         class : App\Service\ArticleManager
         arguments: ['@doctrine.orm.entity_manager']
+
+    comment_subscriber:
+        class: App\CommentSubscriber
+        arguments: ['@twig']
+        tags:
+            - { name : kernel.view}
+
+    comment.count: 
+        class: App\CommentCount
+        arguments: ['@doctrine.orm.entity_manager']
+
+    comment.count.listener:
+        class: App\EventListener\CommentNumberListener
+        arguments : ['comment.count', '@templating']
+
 
 

@@ -19,7 +19,7 @@ class Comment
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\user", inversedBy="comments")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
      */
     private $author;
@@ -30,10 +30,15 @@ class Comment
     private $content;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\article", inversedBy="comments")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Article", inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
      */
     private $article;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createAt;
 
     public function getId(): ?int
     {
@@ -50,6 +55,11 @@ class Comment
         $this->author = $author;
 
         return $this;
+    }
+
+    public function setId(?int $id)
+    {
+        $this->id=$id;
     }
 
     public function getContent(): ?string
@@ -76,5 +86,20 @@ class Comment
         return $this;
     }
 
+    public function __construct() {
+        $this->setCreateAt(new \DateTime());
+    }
+
+    public function getCreateAt(): ?\DateTimeInterface
+    {
+        return $this->createAt;
+    }
+
+    public function setCreateAt(\DateTimeInterface $createAt): self
+    {
+        $this->createAt = $createAt;
+
+        return $this;
+    }
 
 }

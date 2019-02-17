@@ -1,66 +1,111 @@
-{% extends 'base.html.twig' %}
+{% extends 'parent.html.twig' %}
 
 {% block body %}
-<style type="text/css">
-body{
-	background: #f2f2f2;
-}
-.listeCommentaires{
-	width: 50%;
-	margin: auto;
-	max-width: 500px;
-	border: 1px solid gray;
-	padding: 20px 30px 40px 30px;
-	background: white;
-	margin-top: 25px; 
-}
-.comment img{
-	width: 100%;
-	max-width: 50px;
-	max-height: 50px;
-	border-radius: 50%; 
-	margin: 15px;
-}
-.comment span:first-child{
-	font-weight: 500;
-	color: #1254ee;
-	padding-right: 10px;
-}
-</style>
-<h1>{{article.titre}}</h1>
-<p>{{article.content}}</p>
-écrit par {{article.author.username}}
+{{ dump(commentaires) }}
+ <div class="single-blog-wrapper section-padding-0-100">
 
-<a href="{{path('actus')}}"> Retour sur le fil d'actualités</a>
-<h2>Réactions </h2>
-<div class="listeCommentaires">
-	{% for commentaire in commentaires %}
-	<div class="comment">
-		<div class="image">
-			<img src="{{asset('/uploads/images/' ~ commentaire.author.picture) }}">
-		</div>
-		<div class="text">
-			<span>{{commentaire.author.username}}</span>
-			<span>{{commentaire.content}}</span>
-		</div>
-		{% if app.user == commentaire.author %}
-		<div class="link"><a href="{{ path('comment.delete', { 'id' : commentaire.id})}}">supprimer</a></div>
+        <!-- Single Blog Area  -->
+        <div class="single-blog-area blog-style-2 mb-50">
+            <div class="single-blog-thumbnail">
+                <img src="{{asset('img/bg-img/b5.jpg')}}" alt="">
+                <div class="post-tag-content">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="post-date">
+                                    <a href="#">12 <span>march</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-		{% endif %}
-	</div>
-	{% endfor %}
-</div>
-<h2>Ajouter votre commentaire</h2>
-<div class="form-panel">
-	<form action="" class="form-horizontal style-form" method="POST">
-		<div class="form-group">
-			<div class="col-sm-10">
-				{{ form_errors(ajoutComment.content) }}
-				{{ form_widget(ajoutComment.content, {'attr' : {'class' : 'form-control' }}) }}
-			</div>
-		</div>
-		{{form_rest(ajoutComment)}}
-		<input type="submit" name="submit" value="Enregistrer" class="btn btn-sm btn-success"/>
-	</form>
-</div>
+        <div class="container">
+            <div class="row">
+                <!-- ##### Post Content Area ##### -->
+                <div class="col-12 col-lg-12">
+                    <!-- Single Blog Area  -->
+                    <div class="single-blog-area blog-style-2 mb-50">
+                        <!-- Blog Content -->
+                        <div class="single-blog-content">
+                            <div class="line"></div>
+                            <a href="#" class="post-tag">Lifestyle</a>
+                            <h4><a href="#" class="post-headline mb-0">{{article.titre}}</a></h4>
+                            <div class="post-meta mb-50">
+                                <p>By <a href="#">{{article.author.username}}</a></p>
+                                <p>{{nbComment}} comments</p>
+                            </div>
+                            {{article.content | raw}}
+                        </div>
+                    </div>
+
+                    <!-- About Author -->
+                    <div class="blog-post-author mt-100 d-flex">
+                        <div class="author-thumbnail">
+                            <img src="{{asset('img/bg-img/b6.jpg')}}" alt="">
+                        </div>
+                        <div class="author-info">
+                            <div class="line"></div>
+                            <span class="author-role">Author</span>
+                            <h4><a href="#" class="author-name">James Morrison</a></h4>
+                            <p>Curabitur venenatis efficitur lorem sed tempor. Integer aliquet tempor cursus. Nullam vestibulum convallis risus vel condimentum. Nullam auctor lorem in libero luctus, vel volutpat quam tincidunt. Nullam vestibulum convallis risus vel condimentum. Nullam auctor lorem in libero.</p>
+                        </div>
+                    </div>
+
+                    <!-- Comment Area Start -->
+                    <div class="comment_area clearfix mt-70">
+                        <h5 class="title">Comments</h5>
+
+                        <ol>
+                            <!-- Single Comment Area -->
+                            {% for commentaire in commentaires %}
+                            <li class="single_comment_area">
+                                <!-- Comment Content -->
+                                <div class="comment-content d-flex">
+                                    <!-- Comment Author -->
+                                    <div class="comment-author">
+                                        <img src="{{asset('/uploads/images/' ~ commentaire.author.picture) }}" alt="author">
+                                    </div>
+                                    <!-- Comment Meta -->
+                                    <div class="comment-meta">
+                                        <a href="#" class="post-date">March 12</a>
+                                        <p><a href="#" class="post-author">{{commentaire.author.username}}</a></p>
+                                        <p>{{commentaire.content}}</p>
+                                        {% if app.user == commentaire.author %}
+											<div class="link">
+												<a href="{{ path('comment.delete', { 'id' : commentaire.id})}}">supprimer</a>
+											</div>
+
+										{% endif %}
+                                    </div>
+                                </div>
+                            </li>
+							{% endfor %}
+                        </ol>
+                    </div>
+
+                    <div class="post-a-comment-area mt-70">
+                        <h5>Leave a reply</h5>
+                        <!-- Reply Form -->
+                        <form action="" method="POST">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="group">
+                                        {{ form_errors(ajoutComment.content) }}
+										{{ form_widget(ajoutComment.content, {'attr' : {'class' : 'form-control' }}) }}
+                                        <span class="highlight"></span>
+                                        <span class="bar"></span>
+                                        <label>Comment</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                	{{form_rest(ajoutComment)}}
+                                    <button type="submit" class="btn original-btn">Reply</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 {% endblock %}

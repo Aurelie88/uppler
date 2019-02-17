@@ -24,6 +24,18 @@ class CommentRepository extends ServiceEntityRepository
         ->setParameter('article', $article);
         return $query->getResult();
     }
+
+    public function findLastCommentUser($user){
+        $query= $this->_em->createQuery('SELECT c 
+            FROM App:Comment c 
+            WHERE c.author= :user 
+            AND c.createAt =
+                (SELECT MAX(com.createAt)
+                FROM App:Comment com
+                WHERE com.author = :user)')
+        ->setParameter('user', $user);
+        return $query->getResult();
+    }
     // /**
     //  * @return Comment[] Returns an array of Comment objects
     //  */

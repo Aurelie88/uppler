@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <!-- Title -->
+    <title>Original - Lifestyle Blog Template</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="{{asset('img/core-img/favicon.ico')}}">
+
+    <!-- Style CSS -->
+    <link rel="stylesheet" href="{{asset('css/style.css')}}">
+
+</head>
+
+<body>
+    {% block preloader %}{% endblock %}
+
+    
+    <!-- ##### Header Area Start ##### -->
+    <header class="header-area">
+
+        <!-- Logo Area -->
+        <div class="logo-area text-center">
+            <div class="container h-100">
+                <div class="row h-100 align-items-center">
+                    <div class="col-12">
+                        <a href="index.html" class="original-logo"><img src="{{asset('img/core-img/logo.png')}}" alt=""></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nav Area -->
+        <div class="original-nav-area" id="stickyNav">
+            <div class="classy-nav-container breakpoint-off">
+                <div class="container">
+                    <!-- Classy Menu -->
+                    <nav class="classy-navbar justify-content-between">
+
+                        <!-- Navbar Toggler -->
+                        <div class="classy-navbar-toggler">
+                            <span class="navbarToggler"><span></span><span></span><span></span></span>
+                        </div>
+
+                        <!-- Menu -->
+                        <div class="classy-menu" id="originalNav">
+                            <!-- close btn -->
+                            <div class="classycloseIcon">
+                                <div class="cross-wrap"><span class="top"></span><span class="bottom"></span></div>
+                            </div>
+
+                            <!-- Nav Start -->
+                            <div class="classynav">
+                                <ul>
+                                    <li><a href="{{path('home')}}">Home</a></li>
+                                    <li><a href="{{path('actus')}}">Actualités</a></li>
+                                    {% if app.user.username is defined %}
+                                        <li><a class="nav-link" href="{{ path ('app_logout')}}">Se déconnecter</a></li>
+                                    {% else %}
+                                        <li><a class="nav-link" href="{{ path ('app_login')}}">Se connecter</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            <!-- Nav End -->
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- ##### Header Area End ##### -->
+    
+    <!-- ##### Blog Wrapper Start ##### -->
+    <div class="blog-wrapper section-padding-50 clearfix">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-lg-12">
+                    {% block body %}{% endblock %}                
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ##### Blog Wrapper End ##### -->
+
+    <!-- jQuery (Necessary for All JavaScript Plugins) -->
+
+    <script src="{{asset('js/jquery/jquery-2.2.4.min.js')}}"></script>
+    <!-- Popper js -->
+    <script src="{{asset('js/popper.min.js')}}"></script>
+    <!-- Bootstrap js -->
+    <script src="{{asset('js/bootstrap.min.js')}}"></script>
+    <!-- Plugins js -->
+    <script src="{{asset('js/plugins.js')}}"></script>
+    <!-- Active js -->
+    <script src="{{asset('js/active.js')}}"></script>
+    {% block javascript %}{% endblock %}
+
+</body>
+
+</html>
