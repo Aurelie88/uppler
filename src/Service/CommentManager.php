@@ -40,10 +40,6 @@ class CommentManager implements BlogInterface
     }
 
     public function add($data){
-
-        if($data['user']===NULL){             
-            throw new Exception("Veuillez vous connecter", 1);            
-        }
         $comment = $data['comment'];
         $comment->setAuthor($data['user']);
         $comment->setArticle($this->em->getRepository('App:Article')->find($data['idArticle']));
@@ -51,14 +47,7 @@ class CommentManager implements BlogInterface
         $this->em->persist($comment);
         $this->em->flush();
 
-        //$this->dispatcher->dispatch(CommentEvent::NAME, new CommentEvent($comment));
-        /*$CommentCount = new CommentCount($this->em);
-        $commentCountListener = new CommentCountListener($CommentCount);
-       
-    
-        //$this->dispatcher->dispatch(KernelEvents::VIEW, $event);
-        $this->dispatcher->addListener('kernel.response', array($commentCountListener, 'processComment'));
-        //$this->dispatcher->addListener('kernel.view', array($commentCountListener, 'onKernelView'));*/
+        return $comment;
     }
 
     public function delete($data){
@@ -68,6 +57,10 @@ class CommentManager implements BlogInterface
     }
 
     public function update($data){
-
+        $comment = $data['comment'];
+        //$comment->setAuthor($data['user']);
+        //ajout de l'article en bdd
+        $this->em->persist($comment);
+        $this->em->flush();
     }
 }

@@ -5,11 +5,12 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\EntityManager;
 use App\Entity\Article;
+use App\AbstractBlogEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
  */
-class Comment
+class Comment extends AbstractBlogEntity
 {
     /**
      * @ORM\Id()
@@ -25,7 +26,7 @@ class Comment
     private $author;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text")
      */
     private $content;
 

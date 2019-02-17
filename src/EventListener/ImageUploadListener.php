@@ -5,6 +5,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use App\Entity\User;
+use App\Entity\Article;
 use App\ImageUpload;
 
 class ImageUploadListener
@@ -33,7 +34,7 @@ class ImageUploadListener
     private function uploadFile($entity)
     {
         // upload only works for User entities
-        if (!$entity instanceof User) {
+        if ((!$entity instanceof User) && (!$entity instanceof Article)){
             return;
         }
 
@@ -43,7 +44,7 @@ class ImageUploadListener
         if (!$file instanceof UploadedFile) {
             return;
         }
-
+        
         $fileName = $this->uploader->upload($file);
         $entity->setPicture($fileName);
     }

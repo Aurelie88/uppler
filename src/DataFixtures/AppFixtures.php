@@ -68,6 +68,7 @@ class AppFixtures extends Fixture
                 }
                 $article->setContent($articleContent);
                 $article->setAuthor($user);
+                $article->setPicture('default-article.jpg');
                 $article->setTitre("Mon super titre".$idArticle);
                 $manager->persist($article);
             }

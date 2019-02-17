@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 class ArticleType extends AbstractType
 {
@@ -16,7 +17,7 @@ class ArticleType extends AbstractType
         $builder
             ->add('titre', TextType::class)
             ->add('content')
-
+            ->add('picture', FileType::class, array('data_class' => null, 'label' => 'Image(JPG)', 'required'  => false))
         ;
     }
 

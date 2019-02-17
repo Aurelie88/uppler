@@ -5,15 +5,14 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
-use App\Form\ArticleType;
-use App\Entity\Comment;
-use App\Repository\ArticleRepository;
+use App\AbstractBlogEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ArticleRepository")
  */
-class Article
+class Article extends AbstractBlogEntity
 {
 
     /**
@@ -48,6 +47,13 @@ class Article
      * @ORM\Column(type="datetime")
      */
     private $createAt;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     *
+     *@Assert\File(mimeTypes={"image/png", "image/jpeg"})
+     */
+    private $picture;
 
     public function __construct()
     {
@@ -146,6 +152,18 @@ class Article
     public function setCreateAt(\DateTimeInterface $createAt): self
     {
         $this->createAt = $createAt;
+
+        return $this;
+    }
+
+    public function getPicture()
+    {
+        return $this->picture;
+    }
+
+    public function setPicture($picture): self
+    {
+        $this->picture = $picture;
 
         return $this;
     }
