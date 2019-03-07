@@ -15,7 +15,7 @@ class ArticleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('titre', TextType::class)
+            ->add('title', TextType::class)
             ->add('content')
             ->add('picture', FileType::class, array('data_class' => null, 'label' => 'Image(JPG)', 'required'  => false))
         ;

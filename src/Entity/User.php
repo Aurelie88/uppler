@@ -15,6 +15,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface
 {
+    const IMAGE_USER_DEFAULT='default.jpg';
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -41,12 +42,12 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $prenom;
+    private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $nom;
+    private $lastname;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -144,26 +145,26 @@ class User implements UserInterface
         // $this->plainPassword = null;
     }
 
-    public function getPrenom(): ?string
+    public function getName(): ?string
     {
-        return $this->prenom;
+        return $this->name;
     }
 
-    public function setPrenom(string $prenom): self
+    public function setName(string $name): self
     {
-        $this->prenom = $prenom;
+        $this->name = $name;
 
         return $this;
     }
 
-    public function getNom(): ?string
+    public function getLastname(): ?string
     {
-        return $this->nom;
+        return $this->lastname;
     }
 
-    public function setNom(string $nom): self
+    public function setLastname(string $lastname): self
     {
-        $this->nom = $nom;
+        $this->lastname = $lastname;
 
         return $this;
     }

@@ -24,13 +24,13 @@ class ArticleRepository extends ServiceEntityRepository
     public function getAllArticleWithNbcomment()
     {
         
-        // on compte le nombre de commentaire
+        // count number of  comment
         $query = $this->_em->createQuery('SELECT a as article, count(c) as nbComment 
             FROM App:Comment c, App:Article a 
             WHERE c.article = a.id
             GROUP BY c.article');
         $requete1 = $query->getResult();
-        //les article n'ont pas encore de commentaire
+        //article without comment
         $query = $this->_em->createQuery('SELECT a as article, 0 as nbComment
             FROM App:Article a
             WHERE a.id NOT IN (

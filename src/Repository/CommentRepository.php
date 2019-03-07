@@ -19,7 +19,7 @@ class CommentRepository extends ServiceEntityRepository
         parent::__construct($registry, Comment::class);
     }
 
-    //Retourne le nombre de commentaire sur un article donné
+    //get number comment of the article
     public function nbCommentaireArticle($article)
     {
         $query = $this->_em->createQuery('SELECT count(c) as nb FROM App:Comment c WHERE c.article = :article')
@@ -27,7 +27,7 @@ class CommentRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
-    //récupère le dernier commentaire de l'utilisateur connecté
+    //get last comment of user connected
     public function findLastCommentUser($user)
     {
         $query= $this->_em->createQuery('SELECT c 

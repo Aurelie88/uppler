@@ -14,7 +14,7 @@ use App\AbstractBlogEntity;
  */
 class Article extends AbstractBlogEntity
 {
-
+    const IMAGE_ARTICLE_DEFAULT ='default-article.jpg';
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -41,7 +41,7 @@ class Article extends AbstractBlogEntity
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $titre;
+    private $title;
 
     /**
      * @ORM\Column(type="datetime")
@@ -128,21 +128,21 @@ class Article extends AbstractBlogEntity
         return $this;
     }
 
-    public function getTitre(): ?string
+    public function getTitle(): ?string
     {
-        return $this->titre;
+        return $this->title;
     }
 
-    public function setTitre(string $titre): self
+    public function setTitle(string $title): self
     {
-        $this->titre = $titre;
+        $this->title = $title;
 
         return $this;
     }
 
     public function __toString()
     {
-        return $this->titre;
+        return $this->title;
     }
 
     public function getCreateAt(): ?\DateTimeInterface

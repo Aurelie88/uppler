@@ -37,7 +37,7 @@ class NewsController extends AbstractController
      */
     public function index()
     {
-        //page de description du projet visible sans connexion
+        //page without sign in
         return $this->render('home.html.twig');
     }
 
@@ -46,7 +46,7 @@ class NewsController extends AbstractController
      */
     public function news(ArticleRepository $articleReposiory): Response
     {
-        $user = $this->verificationAutorisationAcces();
+        $user = $this->checkAccessAutorization();
         return $this->render(
             'news/index.html.twig',
             array("articles" => $articleReposiory->getAllArticleWithNbcomment())
@@ -58,28 +58,28 @@ class NewsController extends AbstractController
      */
     public function newView($id, Request $request, CommentManager $commentManager, CommentRepository $commentRepository)
     {
-        //acces par mot de passe
-        $user = $this->verificationAutorisationAcces();
+        //With login/pwd
+        $user = $this->checkAccessAutorization();
         
-        //lance une exception si l'article n'existe pas
-        $article = $this->recupererArticle($id);
-        //recupere les commentaires lies a l'article
+        //throw execption if article does not exist
+        $article = $this->getArticle($id);
+        //get comment linked to article
         $comments = $commentRepository->findBy(["article" => $id]);
-        //nb de commentaire ecrit sur l'article
+        //number of comment published on this article
         $nbComment= $commentRepository->nbCommentaireArticle($article);
 
-        //création du form pour pouvoir ajouter des commentaire sur l'article
+        //create form : add Article
         $newComment = new Comment();
         $formComment= $this->createForm(CommentType::class, $newComment);
 
         $formComment->handleRequest($request);
-        //si un commentaire est ajouter
+        //if you add comment
         if ($formComment->isSubmitted() && $formComment->isValid()) {
             $commentManager->add(array("user" => $user, "idArticle" => $id, "comment" => $newComment));
             
-            //redirection vers la page de l'article article
+            //redirect page to refresh information
             //return $this->redirect($this->generateUrl('new.view', ['id' => $id]));
-            //appel l'event kernel.view
+            //event kernel.view
             return array(
             'template' => 'news/new.html.twig',
             'data' => array(
@@ -97,7 +97,7 @@ class NewsController extends AbstractController
                 "article" => $article,
                 "commentaires" => $comments,
                 "nbComment" => $nbComment[0]["nb"],
-            "ajoutComment" => $formComment->createView())
+                "ajoutComment" => $formComment->createView())
         );
     }
 
@@ -106,24 +106,24 @@ class NewsController extends AbstractController
      */
     public function newDelete($id, ArticleManager $articleManager, CommentManager $commentManager, Request $request) : Response
     {
-        $user = $this->verificationAutorisationAcces();
+        $user = $this->checkAccessAutorization();
 
-        //lance une exception si l'article à supprimer n'existe pas
-        $article = $this->recupererArticle($id);
-        //verifie qu'on a l'autorisation de le supprimer (uniquement si on est l'auteur)
+        //throw exception if article does not exist
+        $article = $this->getArticle($id);
+        //check autorization to delete (if you are owner or admin)
         $this->isAuthor($user, $article);
-        //si on repond a la demande de suppression
-        if (isset($_POST['del'])) {
-            if ($_POST['del']=='Oui') {//par oui
+        //send answer
+        if ($request->request->get('del')!==null) {
+            if ($request->request->get('del')=='Oui') {//par oui
                 try {// on supprime d'abord les commentaires liés à l'article puis l'article lui même
                     $articleManager->delete(array('id' => $id));
                 } catch (\Doctrine\DBAL\DBALException $e) {
                 }
             }
-            //retour au fil d'actualité
+            //back to the news
             return $this->redirect($this->generateUrl('actus'));
         }
-        //page demande de confirmation pour la suppression
+        //page confirmation request to delete
         return $this->render('news/delete.html.twig', array('article' => $article));
     }
 
@@ -132,26 +132,25 @@ class NewsController extends AbstractController
      */
     public function commentDelete(CommentManager $commentManager, $id, Request $request) : Response
     {
-        $user = $this->verificationAutorisationAcces();
+        $user = $this->checkAccessAutorization();        
         
-        
-        //on verifie si le commentaire existe
-        $comment = $this->recupererComment($id, $user);
-        //verifie qu'on a l'autorisation de le supprimer (uniquement si on est l'auteur)
+        //check if comment exist
+        $comment = $this->getComment($id, $user);
+        //check autorization to delete (if you are owner or admin)
         $this->isAuthor($user, $comment);
-        //si on repond a la confirmation de suppresion
-        if (isset($_POST['del'])) {
-            if ($_POST['del']=='Oui') {//par oui
+        //send answer
+        if ($request->request->get('del')!==null) {
+            if ($request->request->get('del')=='Oui') {//par oui
                 try {
                     //$commentManager->delete(array('id' => $id));
                     $commentManager->delete(['comment' => $comment]);
                 } catch (\Doctrine\DBAL\DBALException $e) {
                 }
             }
-            // redirection fil d'actualité
+            //back to the news
             return $this->redirect($this->generateUrl('new.view', ['id' => $comment->getArticle()->getId()]));
         }
-        //retourne une page de confirmation pour supprimer le commentaire
+        //page confirmation request to delete
         return $this->render('comment/delete.html.twig', array('commentaire' => $comment));
     }
 
@@ -160,23 +159,20 @@ class NewsController extends AbstractController
      */
     public function newEdit(CommentRepository $commentRepository, ArticleManager $articleManager, $id, Request $request) : Response
     {
-        $user = $this->verificationAutorisationAcces();
-        //verifie si l'article existe
-        $article = $this->recupererArticle($id);
-        //lance une erreur si on est pas propriétaire de l'article
+        $user = $this->checkAccessAutorization();
+        $article = $this->getArticle($id);
         $this->isAuthor($user, $article);
-        //on creer le form rempli avec les valeur de l'article selectionné
+        //create form pre-filled with the value of the selected article
         $form = $this->createForm(ArticleType::class, $article);
 
         $form->handleRequest($request);
 
-        //si envoie du formulaire et qu'il est valide
+        //if form is send and valid
         if ($form->isSubmitted() && $form->isValid()) {
             $articleManager->update(['article' => $article, 'user' => $user]);
-            //redirection vers le fil d'actualité
+            //back to the news
             return $this->redirect($this->generateUrl('actus'));
         }
-
         return $this->render('news/add.html.twig', array('form' => $form->createView(), 'id' => $id));
     }
 
@@ -185,23 +181,18 @@ class NewsController extends AbstractController
      */
     public function commentEdit(CommentRepository $commentRepository, CommentManager $commentManager, $id, Request $request) : Response
     {
-        $user = $this->verificationAutorisationAcces();
-        //verifie si le commentaire existe
-        $comment = $this->recupererComment($id, $user);
-        //lance une erreur si on est pas propriétaire de l'article
+        $user = $this->checkAccessAutorization();
+        $comment = $this->getComment($id, $user);
         $this->isAuthor($user, $comment);
-        //on creer le form rempli avec les valeur de l'article selectionné
         $form = $this->createForm(CommentType::class, $comment);
 
         $form->handleRequest($request);
 
-        //si envoie du formulaire et qu'il est valide
         if ($form->isSubmitted() && $form->isValid()) {
             $commentManager->update(['comment' => $comment, 'user' => $user]);
-            //redirection vers le fil d'actualité
+            //back to article linked to article
             return $this->redirect($this->generateUrl('new.view', ['id' => $comment->getArticle()->getId()]));
         }
-
         return $this->render('comment/edit.html.twig', array('ajoutComment' => $form->createView(), 'id' => $id));
     }
 
@@ -210,62 +201,59 @@ class NewsController extends AbstractController
      */
     public function newAdd(ArticleManager $articleManager, Request $request)
     {
-        $user = $this->verificationAutorisationAcces();
-        //création du formulaire d'ajout d'article
+        $user = $this->checkAccessAutorization();
         $article = new Article();
         $form = $this->createForm(ArticleType::class, $article);
 
         $form->handleRequest($request);
 
-        //si envoie du formulaire et qu'il est valide
         if ($form->isSubmitted() && $form->isValid()) {
-            //ajout de l'article en BDD à l'aide de l'interface
+            //add article to DataBase
             $articleManager->add(array('user' => $user, 'article' => $article));
-            //redirection vers le fil d'actualité
             return $this->redirect($this->generateUrl('actus'));
         }
 
         return $this->render('news/add.html.twig', array('form' => $form->createView()));
     }
 
-    public function verificationAutorisationAcces()
+    public function checkAccessAutorization()
     {
         try {
-            return $user = $this->recupereAuthentification();
+            return $user = $this->getAuthentification();
         } catch (HttpException $e) {
             return $this->redirect($this->generateUrl('app_login'))->send();
         }
     }
 
-    public function recupereAuthentification()
+    public function getAuthentification()
     {
         $user = $this->getUser();
         if ($user===null) {
-            //lancer une exception comme quoi l'utilisateur doit etre co
+            //throw expection the user must be connected
             throw new HttpException(403, "Vous devez vous connecter afin de pouvoir accèder au contenu");
         }
         return $user;
     }
 
-    public function recupererArticle($id)
+    public function getArticle($id)
     {
         $article =$this->em->getRepository('App:Article')->find($id);
-        //si on ne trouve pas l'article, on lance une exception
+        //if article is not found throw exception
         if ($article==null) {
             throw new \Exception("Impossible de trouver l'article n'existe pas");
         }
         return $article;
     }
 
-    public function recupererComment($id, $user)
+    public function getComment($id, $user)
     {
+        //if it is a temporary comment get the last comment of user
         if ($id==0) {
             $comment=$this->em->getRepository('App:Comment')->findLastCommentUser($user)[0];
-            //die(var_dump($comment));
         } else {
             $comment=$this->em->getRepository('App:Comment')->find($id);
         }
-        //si on ne trouve pas le commentaire, on lance une exception
+        //if comment is not found throw exception
         if ($comment==null) {
             throw new \Exception("Impossible de trouver le commentaire n'existe pas");
         }
@@ -274,8 +262,10 @@ class NewsController extends AbstractController
 
     public function isAuthor($user, $Entity)
     {
+        //if user is not ADMIN or Author 
         if (!in_array("ROLE_ADMIN", $user->getRoles())) {
             if ($user!==$Entity->getAuthor()) {
+                //throw exception to prevent user to update or delete content
                 throw new HttpException(403, "Vous n'est pas autorisé a apporter des modification");
             }
         }

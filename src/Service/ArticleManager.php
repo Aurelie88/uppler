@@ -26,6 +26,9 @@ class ArticleManager implements BlogInterface
         $article = $data['article'];
         $article->setAuthor($data['user']);
         //ajout de l'article en bdd
+        if ($article->getPicture()==null) {
+            $article->setPicture(Article::IMAGE_ARTICLE_DEFAULT);
+        }
         $this->em->persist($article);
         $this->em->flush();
     }
@@ -48,7 +51,7 @@ class ArticleManager implements BlogInterface
         $article = $data['article'];
         //$article->setAuthor($data['user']);
         if ($article->getPicture()==null) {
-            $article->setPicture('default-article.jpg');
+            $article->setPicture(Article::IMAGE_ARTICLE_DEFAULT);
         }
         //ajout de l'article en bdd
         $this->em->persist($article);
