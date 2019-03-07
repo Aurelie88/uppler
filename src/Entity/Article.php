@@ -140,7 +140,8 @@ class Article extends AbstractBlogEntity
         return $this;
     }
 
-    public function __toString() {
+    public function __toString()
+    {
         return $this->titre;
     }
 
@@ -167,6 +168,4 @@ class Article extends AbstractBlogEntity
 
         return $this;
     }
-
-
 }

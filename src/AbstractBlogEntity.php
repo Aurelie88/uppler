@@ -5,7 +5,6 @@ namespace App;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\User;
 
-
 abstract class AbstractBlogEntity
 {
     abstract public function getContent();

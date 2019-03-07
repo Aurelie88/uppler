@@ -20,14 +20,16 @@ class CommentRepository extends ServiceEntityRepository
     }
 
     //Retourne le nombre de commentaire sur un article donné
-    public function nbCommentaireArticle($article){
+    public function nbCommentaireArticle($article)
+    {
         $query = $this->_em->createQuery('SELECT count(c) as nb FROM App:Comment c WHERE c.article = :article')
         ->setParameter('article', $article);
         return $query->getResult();
     }
 
     //récupère le dernier commentaire de l'utilisateur connecté
-    public function findLastCommentUser($user){
+    public function findLastCommentUser($user)
+    {
         $query= $this->_em->createQuery('SELECT c 
             FROM App:Comment c 
             WHERE c.author= :user 

@@ -87,7 +87,8 @@ class Comment extends AbstractBlogEntity
         return $this;
     }
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->setCreateAt(new \DateTime());
     }
 
@@ -102,5 +103,4 @@ class Comment extends AbstractBlogEntity
 
         return $this;
     }
-
 }

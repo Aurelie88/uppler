@@ -39,7 +39,8 @@ class CommentManager implements BlogInterface
         $this->dispatcher = $eventDispatcher;
     }
 
-    public function add($data){
+    public function add($data)
+    {
         $comment = $data['comment'];
         $comment->setAuthor($data['user']);
         $comment->setArticle($this->em->getRepository('App:Article')->find($data['idArticle']));
@@ -50,13 +51,15 @@ class CommentManager implements BlogInterface
         return $comment;
     }
 
-    public function delete($data){
+    public function delete($data)
+    {
         //$comment= $this->em->getRepository('App:Comment')->find($data['id']);
         $this->em->remove($data['comment']);
         $this->em->flush();
     }
 
-    public function update($data){
+    public function update($data)
+    {
         $comment = $data['comment'];
         //$comment->setAuthor($data['user']);
         //ajout de l'article en bdd

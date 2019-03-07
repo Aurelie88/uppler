@@ -12,20 +12,22 @@ use App\Entity\Comment;
 use App\Form\CommentType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class CommentSubscriber extends AbstractController implements EventSubscriberInterface 
+class CommentSubscriber extends AbstractController implements EventSubscriberInterface
 {
-	private $twig;
+    private $twig;
 
-	public function __construct(Twig $twig ){
-		$this->twig= $twig;
-	}
-	public static function getSubscribedEvents(){
-		return [
-			KernelEvents::VIEW => 'onMyKernelView'
-		];
-	}
+    public function __construct(Twig $twig)
+    {
+        $this->twig= $twig;
+    }
+    public static function getSubscribedEvents()
+    {
+        return [
+            KernelEvents::VIEW => 'onMyKernelView'
+        ];
+    }
 
-	public function onMyKernelView(GetResponseForControllerResultEvent $event)
+    public function onMyKernelView(GetResponseForControllerResultEvent $event)
     {
         $result = $event->getControllerResult();
         

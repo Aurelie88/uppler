@@ -11,11 +11,12 @@ use App\Entity\Comment;
 
 class AppFixtures extends Fixture
 {
-	private $passwordEncoder;
+    private $passwordEncoder;
 
-	function __construct(UserPasswordEncoderInterface $passwordEncoder){
-		$this->passwordEncoder=$passwordEncoder;
-	}
+    function __construct(UserPasswordEncoderInterface $passwordEncoder)
+    {
+        $this->passwordEncoder=$passwordEncoder;
+    }
 
     public function load(ObjectManager $manager)
     {
@@ -28,7 +29,7 @@ class AppFixtures extends Fixture
         $personne[]=array("prenom"=>"Slade","nom"=>"Sweeney");
 
         //Ajout d'article sur le blog
-        $paragraphe[]=array("content"=>"<p>dictum placerat, augue. Sed molestie. Sed id risus quis diam luctus lobortis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Mauris ut quam vel sapien imperdiet ornare. In faucibus. Morbi vehicula. Pellentesque tincidunt tempus risus. Donec egestas.</p>");   
+        $paragraphe[]=array("content"=>"<p>dictum placerat, augue. Sed molestie. Sed id risus quis diam luctus lobortis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Mauris ut quam vel sapien imperdiet ornare. In faucibus. Morbi vehicula. Pellentesque tincidunt tempus risus. Donec egestas.</p>");
         $paragraphe[]=array("content"=>"<p>amet risus. Donec egestas. Aliquam nec enim. Nunc ut erat. Sed nunc est, mollis non, cursus non, egestas a, dui. Cras pellentesque. Sed dictum. Proin eget odio. Aliquam vulputate ullamcorper magna. Sed eu eros. Nam consequat dolor vitae dolor. Donec fringilla. Donec feugiat metus sit amet ante. Vivamus non lorem vitae odio sagittis semper. Nam tempor diam dictum sapien. Aenean massa. Integer vitae nibh. Donec est mauris, rhoncus id, mollis nec, cursus a, enim. Suspendisse aliquet, sem ut cursus luctus, ipsum leo elementum sem, vitae aliquam eros turpis non enim. Mauris quis turpis vitae purus gravida sagittis. Duis gravida. Praesent eu nulla at sem molestie sodales. Mauris blandit enim consequat purus. Maecenas libero est, congue a, aliquet vel, vulputate eu, odio. Phasellus at augue id ante dictum cursus. Nunc mauris elit, dictum eu, eleifend nec, malesuada ut, sem. Nulla interdum. Curabitur dictum. Phasellus in felis. Nulla tempor augue ac ipsum. Phasellus</p>");
         $paragraphe[]=array("content"=>"<p>neque. In ornare sagittis felis. Donec tempor, est ac mattis semper, dui lectus rutrum urna, nec luctus felis purus ac tellus. Suspendisse sed dolor. Fusce mi lorem, vehicula et, rutrum eu, ultrices sit amet, risus. Donec nibh enim, gravida sit amet, dapibus id, blandit at, nisi. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur</p>");
         $paragraphe[]=array("content"=>"<p>Suspendisse sagittis. Nullam vitae diam. Proin dolor. Nulla semper tellus id nunc interdum feugiat. Sed nec metus facilisis lorem tristique aliquet. Phasellus fermentum convallis ligula. Donec luctus aliquet odio. Etiam ligula tortor, dictum eu, placerat eget, venenatis a, magna. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Etiam laoreet, libero et tristique pellentesque, tellus sem mollis dui, in sodales elit erat vitae risus. Duis a mi fringilla mi lacinia mattis. Integer eu lacus. Quisque imperdiet, erat nonummy ultricies ornare, elit elit fermentum risus, at fringilla purus mauris a nunc. In at pede. Cras vulputate velit eu sem. Pellentesque ut ipsum ac mi eleifend egestas. Sed pharetra, felis eget varius ultrices, mauris ipsum porta elit, a feugiat tellus lorem eu metus. In lorem. Donec elementum, lorem ut aliquam</p>");
@@ -48,7 +49,7 @@ class AppFixtures extends Fixture
             $user->setPicture('default.jpg');
             $manager->persist($user);
 
-        for ($i=0 ; $i<count($personne); $i++){
+        for ($i=0; $i<count($personne); $i++) {
             $user= new User();
             $user->setNom($personne[$i]['nom']);
             $user->setPrenom($personne[$i]['prenom']);
@@ -57,14 +58,14 @@ class AppFixtures extends Fixture
             $user->setPicture(($i+1).'.jpg');
             $manager->persist($user);
             //création de 0 à 3 articles par utilisateur
-            $nbArticleUser=rand(0,3);
-            for ($idx=0; $idx<$nbArticleUser; $idx++){
+            $nbArticleUser=rand(0, 3);
+            for ($idx=0; $idx<$nbArticleUser; $idx++) {
                 $idArticle++;
                 $article = new Article();
                 $articleContent="";
-                $nbParagrapheArticle = rand(2,10);
-                for($j=0;$j<$nbParagrapheArticle; $j++){
-                    $articleContent .= $paragraphe[rand(0,9)]['content'];
+                $nbParagrapheArticle = rand(2, 10);
+                for ($j=0; $j<$nbParagrapheArticle; $j++) {
+                    $articleContent .= $paragraphe[rand(0, 9)]['content'];
                 }
                 $article->setContent($articleContent);
                 $article->setAuthor($user);
@@ -75,12 +76,12 @@ class AppFixtures extends Fixture
         }
         $manager->flush();
 
-        for ($k=0; $k < 50; $k++) { 
-            $articleComment=rand(1,$idArticle);
+        for ($k=0; $k < 50; $k++) {
+            $articleComment=rand(1, $idArticle);
             $comment= new Comment();
             $article=$manager->getRepository('App:Article')->findBy(['titre' => "Mon super titre".$articleComment]);
             $comment->setArticle($article[0]);
-            $comment->setAuthor($manager->getRepository('App:User')->findBy(['username' => $personne[rand(0,5)]['prenom']])[0]);
+            $comment->setAuthor($manager->getRepository('App:User')->findBy(['username' => $personne[rand(0, 5)]['prenom']])[0]);
             $comment->setContent("gllriksdj rudfhnc udj hgv dfjch vn dfjc fhvn rdijkcfhvn rodkfujv sdfj esdf jv rd fnv rdjjfv rd");
             $manager->persist($comment);
         }

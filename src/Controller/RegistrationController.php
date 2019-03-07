@@ -32,7 +32,7 @@ class RegistrationController extends AbstractController
                 )
             );
 
-            if($user->getPicture()==null){
+            if ($user->getPicture()==null) {
                 $user->setPicture('default.jpg');
             }
 

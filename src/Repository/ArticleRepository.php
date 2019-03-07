@@ -21,9 +21,10 @@ class ArticleRepository extends ServiceEntityRepository
 
     //SELECT article.*, count(*) FROM `comment`, article where comment.article_id = article.id group by article_id
 
-    public function getAllArticleWithNbcomment(){
+    public function getAllArticleWithNbcomment()
+    {
         
-        // on compte le nombre de commentaire 
+        // on compte le nombre de commentaire
         $query = $this->_em->createQuery('SELECT a as article, count(c) as nbComment 
             FROM App:Comment c, App:Article a 
             WHERE c.article = a.id
@@ -38,7 +39,7 @@ class ArticleRepository extends ServiceEntityRepository
             WHERE c.article=art.id)');
         $requete2= $query->getResult();
         $results= array_merge($requete1, $requete2);
-        foreach ($results as $key =>$row){
+        foreach ($results as $key => $row) {
             $date[$key]= $row['article']->getId();
         }
         array_multisort($date, SORT_ASC, $results);

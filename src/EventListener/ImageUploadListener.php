@@ -34,7 +34,7 @@ class ImageUploadListener
     private function uploadFile($entity)
     {
         // upload only works for User entities
-        if ((!$entity instanceof User) && (!$entity instanceof Article)){
+        if ((!$entity instanceof User) && (!$entity instanceof Article)) {
             return;
         }
 
