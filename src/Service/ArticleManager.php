@@ -25,7 +25,7 @@ class ArticleManager implements BlogInterface
     {
         $article = $data['article'];
         $article->setAuthor($data['user']);
-        //ajout de l'article en bdd
+        //add article to DataBase
         if ($article->getPicture()==null) {
             $article->setPicture(Article::IMAGE_ARTICLE_DEFAULT);
         }
@@ -37,10 +37,10 @@ class ArticleManager implements BlogInterface
     {
         $article = $this->em->getRepository('App:Article')->find($data['id']);
         $comments=$this->em->getRepository('App:Comment')->findBy(["article" => $data['id']]);
-        //supprime un commentaire à la fois
-        foreach ($comments as $comment) {
+        //code replaced by attribut cascade on entity Article
+        /*foreach ($comments as $comment) {
             $this->em->remove($comment);
-        }
+        }*/
         //suppression de l'article
         $this->em->remove($article);
         $this->em->flush();

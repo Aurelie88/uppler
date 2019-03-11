@@ -1,0 +1,35 @@
+<div class="comment_area clearfix mt-70" style="width: 80%">
+    <h5 class="title">Comments</h5>
+    {% if commentaires == null %}Be the first to leave your review {% endif %}
+    <ol>
+        <!-- Single Comment Area -->
+        {% for commentaire in commentaires %}
+        <li class="single_comment_area">
+            <!-- Comment Content -->
+            <div class="comment-content d-flex">
+                <!-- Comment Author -->
+                <div class="comment-author">
+                    <img src="{{asset('/uploads/images/' ~ commentaire.author.picture) }}" alt="author">
+                </div>
+                <!-- Comment Meta -->
+                <div class="comment-meta">
+                    <a href="#" class="post-date" style="display: inline-block;">{{ commentaire.createAt |date("F jS \\a\\t g:ia") }}</a>
+                    {% if app.user == commentaire.author or is_granted('ROLE_ADMIN') %}
+                    <div class="dropdown" style=" display: inline-block; float: right;">
+                        <button class="btn btn-primary-outline" style="background:none;"type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="{{ path('comment.delete', { 'id' : commentaire.id})}}">Supprimer</a>
+                            <a class="dropdown-item" href="{{ path('comment.edit', { 'id' : commentaire.id})}}">Modifier</a>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <p><a href="#" class="post-author">{{commentaire.author.username}}</a></p>
+                    <p>{{commentaire.content}}</p>									
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ol>
+</div>
